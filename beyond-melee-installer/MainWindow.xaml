@@ -1,0 +1,110 @@
+﻿<Window x:Class="beyond_melee_installer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:beyond_melee_installer"
+        mc:Ignorable="d"
+    	ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen"
+        Title="Beyond Melee Patcher v0.1.0-offline" Height="610" Width="800">
+    <Window.Resources>
+        <Style TargetType="TextBlock">
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        <Style TargetType="Label">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        <Style TargetType="Button">
+            <Setter Property="FontSize" Value="24"/>
+            <Setter Property="Foreground" Value="Black"/>
+        </Style>
+        <Style TargetType="RadioButton">
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+    </Window.Resources>
+    <StackPanel Name="FilePanel" Drop="FilePanel_Drop" AllowDrop="True" Background="Gray" Height="600">
+        <Grid Background="Gray" Height="600">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="118"/>
+                <RowDefinition Height="476"/>
+            </Grid.RowDefinitions>
+            <Border Opacity="1" BorderThickness="1" BorderBrush="Black" Grid.Column="0" Grid.ColumnSpan="3"/>
+            <Border Opacity="1" BorderThickness="1" BorderBrush="Black" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="3"/>
+
+            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" FontFamily="{StaticResource Montserrat}" Grid.Row="0" Grid.ColumnSpan="1" TextWrapping="Wrap" FontSize="14" Width="200" Height="50" Margin="8">
+                This took a ton of work! If you wanna support us, here is 
+			    <Hyperlink FontFamily="{StaticResource Montserrat}" NavigateUri="https://www.patreon.com/BeyondMelee" RequestNavigate="hyperlink_RequestNavigate">
+				    our Patreon
+			    </Hyperlink>
+            </TextBlock>
+
+            <TextBlock Height="60" Margin="10,51,198,464" Grid.RowSpan="2">
+                <Hyperlink NavigateUri="https://www.patreon.com/BeyondMelee" RequestNavigate="hyperlink_RequestNavigate">
+                    <Image Source="Images/patreon.png" Height="56"/>
+                </Hyperlink>
+            </TextBlock>
+
+
+            <TextBlock HorizontalAlignment="Right" VerticalAlignment="Top" TextAlignment="Right" FontFamily="{StaticResource Montserrat}" Grid.Row="0" Grid.ColumnSpan="1" Grid.Column="2" TextWrapping="Wrap" FontSize="14" Width="200" Height="50" Margin="8">
+                If you need help, wanna help, or just talk with us, join
+			    <Hyperlink FontFamily="{StaticResource Montserrat}" NavigateUri="https://beyondmelee.com/discord/" RequestNavigate="hyperlink_RequestNavigate">
+				    our Discord
+			    </Hyperlink>
+            </TextBlock>
+
+            <TextBlock Grid.Column="2" Height="60" Margin="193,59,7,475" Grid.RowSpan="2">
+                <Hyperlink NavigateUri="https://beyondmelee.com/discord/" RequestNavigate="hyperlink_RequestNavigate">
+                    <Image Source="Images/discord.png" Height="57"/>
+                </Hyperlink>
+            </TextBlock>
+
+            <Image Source="Images/title.png" Margin="4,6,4,30" Grid.ColumnSpan="3"/>
+            <Label HorizontalAlignment="Center" Content="Drop ISO Anywhere in the Window To Begin" FontSize="18" FontFamily="{StaticResource Montserrat}" Margin="0,86,0,0" Grid.ColumnSpan="3"/>
+
+            <Image Stretch="Fill" Source="Images/background.png" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Row="1" Grid.ColumnSpan="3"/>
+
+            <Image x:Name="BannerImage" VerticalAlignment="Top" HorizontalAlignment="Left" Grid.Row="1" Height="80" Width="240" Margin="60,32,0,0" Grid.ColumnSpan="3"/>
+
+            <Border BorderThickness="10" Opacity="0.9" CornerRadius="6" Grid.Row="1" Margin="19,264,28,154" BorderBrush="Black">
+                <Rectangle Fill="#000000" Stretch="UniformToFill" ClipToBounds="True" Grid.ColumnSpan="3" Margin="0,0,-1,0"/>
+            </Border>
+            <RadioButton x:Name="BeyondRadio" Content="Beyond Melee" Checked="BeyondRadio_Checked"  HorizontalAlignment="Left" FontFamily="{StaticResource Montserrat}" Margin="25,271,0,0" VerticalAlignment="Top" Grid.Row="1"/>
+            <RadioButton x:Name="DietRadio" Content="Diet Beyond Melee" Checked="DietRadio_Checked" HorizontalAlignment="Left" FontFamily="{StaticResource Montserrat}" Margin="25,297,0,0" VerticalAlignment="Top" Grid.Row="1"/>
+
+
+            <Image x:Name="PreviewImage" Source="Images/drop_iso.png" HorizontalAlignment="Left" Width="432" Height="245" Margin="334,10,0,0" Grid.Row="1" VerticalAlignment="Top" Grid.ColumnSpan="3"/>
+            <Border BorderThickness="10" Opacity="0.9" CornerRadius="6, 6, 6, 6" Grid.Row="1" Margin="320,264,19,154" BorderBrush="Black" Grid.ColumnSpan="3">
+                <Rectangle Fill="#000000" Stretch="UniformToFill" ClipToBounds="True"/>
+            </Border>
+            <TextBlock x:Name="VersionInfo" FontFamily="{StaticResource Montserrat}" FontSize="16" TextAlignment="Center" TextWrapping="Wrap" Margin="62,264,21,154" Grid.Row="1" Text="" Grid.ColumnSpan="2" Grid.Column="1"/>
+
+            <Border BorderThickness="10" Opacity="0.9" CornerRadius="6, 6, 6, 6" Grid.Row="1" Margin="19,330,19,80" BorderBrush="Black" Grid.ColumnSpan="3">
+                <Rectangle Fill="#000000" Stretch="UniformToFill" ClipToBounds="True" Margin="-2,0,0,0" Height="54" VerticalAlignment="Center" HorizontalAlignment="Left" Width="748"/>
+
+            </Border>
+            <TextBlock x:Name="FileNameLabel" Text="" FontSize="16" TextAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource Montserrat}" TextWrapping="Wrap" Margin="0,330,0,100" Grid.Row="1" Width="742" Grid.ColumnSpan="3"/>
+            <TextBlock x:Name="FileNameLabel2" Text="" TextAlignment="Center" HorizontalAlignment="Center" FontSize="16" FontFamily="{StaticResource Montserrat}" TextWrapping="Wrap" Margin="0,350,0,76" Grid.Row="1" Width="742" Grid.ColumnSpan="3"/>
+            <TextBlock HorizontalAlignment="Center" Margin="0, 370, 0, 56" Grid.Row="1" Grid.ColumnSpan="3">
+			    <Hyperlink x:Name="hyperlink" NavigateUri="https://diet.melee.tv/guides/nkit-decompression.html" RequestNavigate="hyperlink_RequestNavigate">
+				    <TextBlock FontSize="18" FontFamily="{StaticResource Montserrat}" x:Name="LinkText" Text=""/>
+			    </Hyperlink>
+		    </TextBlock>
+
+            <Button x:Name="dm" Content="Patch ISO!" HorizontalAlignment="Left" VerticalAlignment="Top" FontFamily="{StaticResource Montserrat}" Click="patch_Click" Grid.Row="1" Margin="97,424,0,0" Grid.Column="2"/>
+
+            <Border BorderThickness="10" Opacity="0.9" CornerRadius="6" Grid.Row="1" Margin="15,449,20,4" BorderBrush="Black">
+                <Rectangle Fill="#000000" Stretch="UniformToFill" ClipToBounds="True" Grid.ColumnSpan="3" Margin="0,0,-1,0"/>
+            </Border>
+            <TextBlock FontFamily="{StaticResource Montserrat}" FontSize="12" Text="Patcher by cynthetic - @cyntheticTV" Margin="19,452,8,4" Grid.Row="1" Width="240" Height="20"/>
+
+        </Grid>
+    </StackPanel>
+</Window>

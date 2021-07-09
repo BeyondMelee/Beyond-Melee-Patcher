@@ -1,0 +1,90 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RootNamespace>beyond_melee_installer</RootNamespace>
+    <UseWPF>true</UseWPF>
+	<ApplicationIcon>bm.ico</ApplicationIcon>
+	<AssemblyName>beyond-melee-patcher</AssemblyName>
+	<Version>0.1.0-offline</Version>
+	<Authors>Cynthetic</Authors>
+	<Company>Beyond Melee Team</Company>
+	<PublishTrimmed>True</PublishTrimmed>
+	<Product>Beyond Melee Windows Patcher</Product>
+  </PropertyGroup>
+
+	<ItemGroup>
+		<None Remove="bm.ico" />
+		<None Remove="Fonts\Montserrat-Bold.ttf" />
+		<None Remove="Fonts\Montserrat-Regular.ttf" />
+		<None Remove="Images\background.png" />
+		<None Remove="Images\beyond_banner.png" />
+		<None Remove="Images\beyond_preview.png" />
+		<None Remove="Images\diet_banner.png" />
+		<None Remove="Images\diet_preview.png" />
+		<None Remove="Images\discord.png" />
+		<None Remove="Images\drop_iso.png" />
+		<None Remove="Images\patreon.png" />
+		<None Remove="Images\splash.png" />
+		<None Remove="Images\title.png" />
+		<None Remove="resources\beyond_patch.xdelta" />
+		<None Remove="resources\diet_patch.xdelta" />
+		<None Remove="resources\xdelta.exe" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Resource Include="Images\beyond_banner.png">
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	  </Resource>
+	  <Resource Include="Images\beyond_preview.png">
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	  </Resource>
+	  <Resource Include="Images\diet_banner.png">
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	  </Resource>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Resource Include="bm.ico">
+		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Fonts\Montserrat-Bold.ttf">
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Fonts\Montserrat-Regular.ttf">
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Images\background.png">
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Images\diet_preview.png">
+		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Images\discord.png">
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Images\drop_iso.png">
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Images\patreon.png">
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="resources\beyond_patch.xdelta">
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="resources\diet_patch.xdelta">
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</Resource>
+		<SplashScreen Include="Images\splash.png">
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</SplashScreen>
+		<Resource Include="Images\title.png">
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="resources\xdelta.exe">
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</Resource>
+	</ItemGroup>
+
+</Project>
