@@ -71,7 +71,7 @@
 
             <Image Stretch="Fill" Source="Images/background.png" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Row="1" Grid.ColumnSpan="3"/>
 
-            <Image x:Name="BannerImage" VerticalAlignment="Top" HorizontalAlignment="Left" Grid.Row="1" Height="80" Width="240" Margin="60,32,0,0" Grid.ColumnSpan="3"/>
+            <Image x:Name="BannerImage" VerticalAlignment="Top" HorizontalAlignment="Left" Grid.Row="1" Height="80" Width="240" Margin="39,94,0,0" Grid.ColumnSpan="2"/>
 
             <Border BorderThickness="10" Opacity="0.9" CornerRadius="6" Grid.Row="1" Margin="19,264,28,154" BorderBrush="Black">
                 <Rectangle Fill="#000000" Stretch="UniformToFill" ClipToBounds="True" Grid.ColumnSpan="3" Margin="0,0,-1,0"/>
@@ -98,7 +98,7 @@
 			    </Hyperlink>
 		    </TextBlock>
 
-            <Button x:Name="dm" Content="Patch ISO!" HorizontalAlignment="Left" VerticalAlignment="Top" FontFamily="{StaticResource Montserrat}" Click="patch_Click" Grid.Row="1" Margin="97,424,0,0" Grid.Column="2"/>
+            <Button x:Name="dm" Content="Patch ISO!" HorizontalAlignment="Left" VerticalAlignment="Top" FontFamily="{StaticResource Montserrat}" Click="patch_Click" Grid.Row="1" Margin="108,410,0,0" Grid.Column="2"/>
 
             <Border BorderThickness="10" Opacity="0.9" CornerRadius="6" Grid.Row="1" Margin="15,449,20,4" BorderBrush="Black">
                 <Rectangle Fill="#000000" Stretch="UniformToFill" ClipToBounds="True" Grid.ColumnSpan="3" Margin="0,0,-1,0"/>

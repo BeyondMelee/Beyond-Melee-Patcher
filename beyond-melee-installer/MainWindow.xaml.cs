@@ -49,14 +49,14 @@ namespace beyond_melee_installer
                 {
                     if (BeyondRadio.IsChecked == true)
                     {
-                        PreviewImage.Source = new BitmapImage(new Uri("pack://application:,,,/Images/dm_preview.png"));
-                        BannerImage.Source = new BitmapImage(new Uri("pack://application:,,,/Images/dm_banner.png"));
+                        PreviewImage.Source = new BitmapImage(new Uri("pack://application:,,,/Images/beyond_preview.png"));
+                        BannerImage.Source = new BitmapImage(new Uri("pack://application:,,,/Images/beyond_banner.png"));
                         VersionInfo.Text = "The standard version of Beyond Melee. All the great new features right in Melee.";
                     }
                     else if (DietRadio.IsChecked == true)
                     {
-                        PreviewImage.Source = new BitmapImage(new Uri("pack://application:,,,/Images/dmc_preview.png"));
-                        BannerImage.Source = new BitmapImage(new Uri("pack://application:,,,/Images/dmc_banner.png"));
+                        PreviewImage.Source = new BitmapImage(new Uri("pack://application:,,,/Images/diet_preview.png"));
+                        BannerImage.Source = new BitmapImage(new Uri("pack://application:,,,/Images/diet_banner.png"));
                         VersionInfo.Text = "Diet Beyond Melee is a lower quality version of Beyond Melee made to run on lower end hardware, like Diet Melee.";
                     }
                     //Removes old text and changes colors to green
@@ -94,7 +94,7 @@ namespace beyond_melee_installer
                     else
                     {
                         FileNameLabel2.Foreground = Brushes.Red;
-                        FileNameLabel2.Text = "Something went wrong. Is this really an iso file? Check the #i-need-help channel in the Discord.";
+                        FileNameLabel2.Text = "Something went wrong. Check the #i-need-help channel in the Discord.";
                     }
 
                 }
