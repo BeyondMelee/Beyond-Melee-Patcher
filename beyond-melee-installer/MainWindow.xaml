@@ -7,7 +7,7 @@
         mc:Ignorable="d"
     	ResizeMode="NoResize"
         WindowStartupLocation="CenterScreen"
-        Title="Beyond Melee Patcher v0.1.1-offline" Height="610" Width="800">
+        Title="Beyond Melee Patcher v0.1.2-offline" Height="610" Width="800">
     <Window.Resources>
         <Style TargetType="TextBlock">
             <Setter Property="Foreground" Value="White"/>

@@ -17,7 +17,7 @@ namespace beyond_melee_installer
 
         private string filePath = "";
 
-        private readonly string versionNumber = "1-0-0";
+        private readonly string versionNumber = "1-0-1";
 
         //private Uri deltaUri = new Uri("pack://application:,,,/Resources/Patch.xdelta");
 
