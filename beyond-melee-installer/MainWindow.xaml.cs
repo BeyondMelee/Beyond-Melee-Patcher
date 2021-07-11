@@ -94,7 +94,7 @@ namespace beyond_melee_installer
                     else
                     {
                         FileNameLabel2.Foreground = Brushes.Red;
-                        FileNameLabel2.Text = "Something went wrong. Check the #i-need-help channel in the Discord.";
+                        FileNameLabel2.Text = "Something went wrong. Check the #patcher-support channel in the Discord.";
                     }
 
                 }
@@ -108,7 +108,7 @@ namespace beyond_melee_installer
                     else
                     {
                         FileNameLabel2.Foreground = Brushes.Red;
-                        FileNameLabel2.Text = "Something went wrong. Check the #i-need-help channel in the Discord.";
+                        FileNameLabel2.Text = "Something went wrong. Check the #patcher-support channel in the Discord.";
                     }
 
                 }
