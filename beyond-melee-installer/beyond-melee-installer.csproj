@@ -7,7 +7,7 @@
     <UseWPF>true</UseWPF>
 	<ApplicationIcon>bm.ico</ApplicationIcon>
 	<AssemblyName>beyond-melee-patcher</AssemblyName>
-	<Version>0.1.2-offline</Version>
+	<Version>0.2.0-offline</Version>
 	<Authors>Cynthetic</Authors>
 	<Company>Beyond Melee Team</Company>
 	<PublishTrimmed>True</PublishTrimmed>

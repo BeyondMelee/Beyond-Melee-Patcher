@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Threading;
+using System.Security.Cryptography;
 using System.Windows.Media.Imaging;
 using System.IO;
+using System.Text;
 using System.Diagnostics;
 using System.Windows.Navigation;
 using System.Windows;
@@ -17,7 +19,7 @@ namespace beyond_melee_installer
 
         private string filePath = "";
 
-        private readonly string versionNumber = "1-0-1";
+        private readonly string versionNumber = "1-0-4";
 
         //private Uri deltaUri = new Uri("pack://application:,,,/Resources/Patch.xdelta");
 
@@ -32,18 +34,29 @@ namespace beyond_melee_installer
             {
                 string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
 
-                if (Path.GetFileName(files[0]).Contains(".nkit.iso"))
+                string md5 = GetMD5(files[0]);
+
+                if (!Path.GetFileName(files[0]).Contains(".iso"))
+                {
+                    FileNameLabel2.Foreground = Brushes.Red;
+                    FileNameLabel2.Text = "This does not seem to be an iso file. Please use an iso file";
+                    LinkText.Text = String.Empty;
+                }
+                else if (CheckMD5(md5) == "invalid")
+                {
+                    FileNameLabel.Foreground = Brushes.Red;
+                    FileNameLabel.Text = "This iso file seems to be modified.  Please use a completely vanilla NTSC 1.02 iso.";
+                    FileNameLabel2.Foreground = Brushes.Red;
+                    FileNameLabel2.Text = "(This includes any skins or visual mods, which also interfere with the patch.)";
+                    LinkText.Text = String.Empty;
+                }
+                else if (CheckMD5(md5) == "nkit")
                 {
                     FileNameLabel.Foreground = Brushes.Red;
                     FileNameLabel.Text = "This application cannot process nkit compressed iso files.";
                     FileNameLabel2.Foreground = Brushes.Red;
                     FileNameLabel2.Text = "Please click the link below for a guide on how to decompress it.";
                     LinkText.Text = "Guide for NKit decompression";
-                }
-                else if (!Path.GetFileName(files[0]).Contains(".iso"))
-                {
-                    FileNameLabel2.Foreground = Brushes.Red;
-                    FileNameLabel2.Text = "This does not seem to be an iso file. Please use an iso file";
                 }
                 else
                 {
@@ -220,6 +233,28 @@ namespace beyond_melee_installer
                 FileNameLabel2.Foreground = Brushes.Red;
                 FileNameLabel2.Text = "Please drop a file in first.";
             }
+        }
+
+        private string GetMD5(string filename)
+        {
+            using var stream = File.OpenRead(filename);
+            using var md5 = MD5.Create();
+            var hash =  md5.ComputeHash(stream);
+            return BitConverter.ToString(hash).Replace("-", String.Empty).ToLowerInvariant();
+        }
+
+        private string CheckMD5(string hash)
+        {
+            switch (hash)
+            {
+                case "0e63d4223b01d9aba596259dc155a174":
+                    return "valid";
+                case "570f5ba46604d17f2d9c4fabe4b8c34d":
+                    return "nkit";
+                default:
+                    return "invalid";
+            }
+
         }
     }
 }
