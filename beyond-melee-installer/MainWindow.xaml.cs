@@ -1,7 +1,10 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Threading;
+using System.Security.Cryptography;
 using System.Windows.Media.Imaging;
 using System.IO;
+using System.Text;
 using System.Diagnostics;
 using System.Windows.Navigation;
 using System.Windows;
@@ -17,7 +20,9 @@ namespace beyond_melee_installer
 
         private string filePath = "";
 
-        private readonly string versionNumber = "1-0-1";
+        private readonly string versionNumber = "1-1-1";
+
+        private readonly BackgroundWorker worker = new BackgroundWorker();
 
         //private Uri deltaUri = new Uri("pack://application:,,,/Resources/Patch.xdelta");
 
@@ -32,43 +37,39 @@ namespace beyond_melee_installer
             {
                 string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
 
-                if (Path.GetFileName(files[0]).Contains(".nkit.iso"))
+                if (files.Length > 1)
                 {
-                    FileNameLabel.Foreground = Brushes.Red;
-                    FileNameLabel.Text = "This application cannot process nkit compressed iso files.";
+                    FileNameLabel.Text = string.Empty;
                     FileNameLabel2.Foreground = Brushes.Red;
-                    FileNameLabel2.Text = "Please click the link below for a guide on how to decompress it.";
-                    LinkText.Text = "Guide for NKit decompression";
+                    FileNameLabel2.Text = "Please only drop one file in the window at a time.";
+                    LinkText.Text = string.Empty;
                 }
+
                 else if (!Path.GetFileName(files[0]).Contains(".iso"))
                 {
+                    FileNameLabel.Text = string.Empty;
                     FileNameLabel2.Foreground = Brushes.Red;
-                    FileNameLabel2.Text = "This does not seem to be an iso file. Please use an iso file";
+                    FileNameLabel2.Text = "This does not seem to be an iso file. Please use an iso file.";
+                    LinkText.Text = string.Empty;
                 }
                 else
                 {
-                    if (BeyondRadio.IsChecked == true)
+                    FileNameLabel.Text = string.Empty;
+                    FileNameLabel2.Foreground = Brushes.Yellow;
+                    FileNameLabel2.Text = "Checking iso file...";
+                    worker.DoWork += delegate (object s, DoWorkEventArgs args)
                     {
-                        PreviewImage.Source = new BitmapImage(new Uri("pack://application:,,,/Images/beyond_preview.png"));
-                        BannerImage.Source = new BitmapImage(new Uri("pack://application:,,,/Images/beyond_banner.png"));
-                        VersionInfo.Text = "The standard version of Beyond Melee. All the great new features right in Melee.";
-                    }
-                    else if (DietRadio.IsChecked == true)
+                        string path = (string)args.Argument;
+                        args.Result = GetMD5(path);
+                    };
+
+                    worker.RunWorkerCompleted += delegate (object s, RunWorkerCompletedEventArgs args)
                     {
-                        PreviewImage.Source = new BitmapImage(new Uri("pack://application:,,,/Images/diet_preview.png"));
-                        BannerImage.Source = new BitmapImage(new Uri("pack://application:,,,/Images/diet_banner.png"));
-                        VersionInfo.Text = "Diet Beyond Melee is a lower quality version of Beyond Melee made to run on lower end hardware, like Diet Melee.";
-                    }
-                    //Removes old text and changes colors to green
-                    FileNameLabel.Foreground = Brushes.LightGreen;
-                    FileNameLabel.Text = "";
-                    FileNameLabel2.Foreground = Brushes.LightGreen;
-                    FileNameLabel2.Text = "";
-                    LinkText.Text = "";
+                        string result = (string)args.Result;
+                        CompareMD5(result, files[0]);
+                    };
 
-                    filePath = Path.GetFullPath(files[0]);
-
-                    FileNameLabel.Text = Path.GetFileName(files[0]);
+                    worker.RunWorkerAsync(files[0]);
                 }
             }
         }
@@ -84,8 +85,9 @@ namespace beyond_melee_installer
             {
                 if (BeyondRadio.IsChecked == true)
                 {
+                    //for some reason this doesnt work
                     FileNameLabel2.Foreground = Brushes.Yellow;
-                    FileNameLabel2.Text = "Patching...";
+                    FileNameLabel2.Text = "Running Patch...";
                     if (RunPatch("beyond_patch", filePath, $"Beyond-Melee-{versionNumber}"))
                     {
                         FileNameLabel2.Foreground = Brushes.LightGreen;
@@ -100,6 +102,9 @@ namespace beyond_melee_installer
                 }
                 else if (DietRadio.IsChecked == true)
                 {
+                    //for some reason this doesnt work
+                    FileNameLabel2.Foreground = Brushes.Yellow;
+                    FileNameLabel2.Text = "Running Patch...";
                     if (RunPatch("diet_patch", filePath, $"Diet-Beyond-Melee-{versionNumber}"))
                     {
                         FileNameLabel2.Foreground = Brushes.LightGreen;
@@ -219,6 +224,73 @@ namespace beyond_melee_installer
             {
                 FileNameLabel2.Foreground = Brushes.Red;
                 FileNameLabel2.Text = "Please drop a file in first.";
+            }
+        }
+
+        private string GetMD5(string filename)
+        {
+            using var stream = File.OpenRead(filename);
+            using var md5 = MD5.Create();
+            var hash = md5.ComputeHash(stream);
+            return BitConverter.ToString(hash).Replace("-", String.Empty).ToLowerInvariant();
+        }
+
+        private string CheckMD5(string hash)
+        {
+            switch (hash)
+            {
+                case "0e63d4223b01d9aba596259dc155a174":
+                    return "valid";
+                case "570f5ba46604d17f2d9c4fabe4b8c34d":
+                    return "nkit";
+                default:
+                    return "invalid";
+            }
+
+        }
+
+        private void CompareMD5(string hash, string filename)
+        {
+            if (CheckMD5(hash) == "invalid")
+            {
+                FileNameLabel.Foreground = Brushes.Red;
+                FileNameLabel.Text = "This iso file seems to be modified.  Please use a completely vanilla NTSC 1.02 iso.";
+                FileNameLabel2.Foreground = Brushes.Red;
+                FileNameLabel2.Text = "(This includes any skins or visual mods, which also interfere with the patch.)";
+                LinkText.Text = String.Empty;
+            }
+            else if (CheckMD5(hash) == "nkit")
+            {
+                FileNameLabel.Foreground = Brushes.Red;
+                FileNameLabel.Text = "This application cannot process nkit compressed iso files.";
+                FileNameLabel2.Foreground = Brushes.Red;
+                FileNameLabel2.Text = "Please click the link below for a guide on how to decompress it.";
+                LinkText.Text = "Guide for NKit decompression";
+            }
+            else
+            {
+                if (BeyondRadio.IsChecked == true)
+                {
+                    PreviewImage.Source = new BitmapImage(new Uri("pack://application:,,,/Images/beyond_preview.png"));
+                    BannerImage.Source = new BitmapImage(new Uri("pack://application:,,,/Images/beyond_banner.png"));
+                    VersionInfo.Text = "The standard version of Beyond Melee. All the great new features right in Melee.";
+                }
+                else if (DietRadio.IsChecked == true)
+                {
+                    PreviewImage.Source = new BitmapImage(new Uri("pack://application:,,,/Images/diet_preview.png"));
+                    BannerImage.Source = new BitmapImage(new Uri("pack://application:,,,/Images/diet_banner.png"));
+                    VersionInfo.Text = "Diet Beyond Melee is a lower quality version of Beyond Melee made to run on lower end hardware, like Diet Melee.";
+                }
+                //Removes old text and changes colors to green
+                FileNameLabel.Foreground = Brushes.LightGreen;
+                FileNameLabel.Text = "";
+                FileNameLabel2.Foreground = Brushes.LightGreen;
+                FileNameLabel2.Text = "";
+                LinkText.Text = "";
+
+                filePath = Path.GetFullPath(filename);
+
+                FileNameLabel.Text = Path.GetFileName(filename);
             }
         }
     }
