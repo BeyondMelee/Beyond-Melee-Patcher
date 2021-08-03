@@ -3,12 +3,14 @@ using System.ComponentModel;
 using System.Threading;
 using System.Security.Cryptography;
 using System.Windows.Media.Imaging;
+using System.Net;
 using System.IO;
 using System.Text;
 using System.Diagnostics;
 using System.Windows.Navigation;
 using System.Windows;
 using System.Windows.Media;
+using System.Threading.Tasks;
 
 namespace beyond_melee_installer
 {
@@ -22,7 +24,12 @@ namespace beyond_melee_installer
 
         private readonly string versionNumber = "1-1-1";
 
+        private static readonly Uri beyondUri = new Uri("https://download1586.mediafire.com/8b4zgkzdu8mg/orwanf9crpzha3l/beyond_patch.xdelta", UriKind.Absolute);
+        private static readonly Uri dietUri = new Uri("https://download1072.mediafire.com/nrmdbyxn6meg/ngcf4nwuo7bao9u/diet_beyond_patch.xdelta", UriKind.Absolute);
+
         private readonly BackgroundWorker worker = new BackgroundWorker();
+
+        private static readonly WebClient webClient = new WebClient();
 
         //private Uri deltaUri = new Uri("pack://application:,,,/Resources/Patch.xdelta");
 
@@ -88,7 +95,7 @@ namespace beyond_melee_installer
                     //for some reason this doesnt work
                     FileNameLabel2.Foreground = Brushes.Yellow;
                     FileNameLabel2.Text = "Running Patch...";
-                    if (RunPatch("beyond_patch", filePath, $"Beyond-Melee-{versionNumber}"))
+                    if (RunPatch("beyond", filePath, $"Beyond-Melee-{versionNumber}"))
                     {
                         FileNameLabel.Foreground = Brushes.LightGreen;
                         FileNameLabel.Text = "Success! Your file should be in the same folder as this patcher named";
@@ -107,7 +114,8 @@ namespace beyond_melee_installer
                     //for some reason this doesnt work
                     FileNameLabel2.Foreground = Brushes.Yellow;
                     FileNameLabel2.Text = "Running Patch...";
-                    if (RunPatch("diet_patch", filePath, $"Diet-Beyond-Melee-{versionNumber}"))
+
+                    if ((bool)RunPatch("diet", filePath, $"Diet-Beyond-Melee-{versionNumber}"))
                     {
                         FileNameLabel.Foreground = Brushes.LightGreen;
                         FileNameLabel.Text = "Success! Your file should be in the same folder as this patcher named";
@@ -129,7 +137,7 @@ namespace beyond_melee_installer
             }
         }
 
-        public static bool RunPatch(string patch, string isoPath, string versionName)
+        public static async Task<bool> RunPatch(string patch, string isoPath, string versionName)
         {
 
             var xdeltaUri = new Uri("pack://application:,,,/Resources/xdelta.exe");
@@ -142,10 +150,20 @@ namespace beyond_melee_installer
             string xdeltaPath = Path.Join(tmpFolder, "xdelta.exe");
             string deltaPath = Path.Join(tmpFolder, "Patch.xdelta");
 
-            WriteResourceFile(xdeltaUri, xdeltaPath);
-            Trace.WriteLine($"Copied xdelta to {xdeltaPath}");
-            WriteResourceFile(deltaUri, deltaPath);
-            Trace.WriteLine($"Copied Patch to {deltaPath}");
+            if (patch == "beyond")
+            {
+                await DownloadPatch(beyondUri, xdeltaPath);
+            }
+            else
+            {
+                await DownloadPatch(deltaUri, xdeltaPath);
+            }
+            
+
+            //WriteResourceFile(xdeltaUri, xdeltaPath);
+            //Trace.WriteLine($"Copied xdelta to {xdeltaPath}");
+            //WriteResourceFile(deltaUri, deltaPath);
+            //Trace.WriteLine($"Copied Patch to {deltaPath}");
 
             //Change the following string from /C to /K to leave the cmd window open for debugging
             string cmdTxt = $"-d -f -s \"{isoPath}\" \"{deltaPath}\" \"{versionName}\".iso";
@@ -175,6 +193,13 @@ namespace beyond_melee_installer
                 Trace.WriteLine($"Deleted patch");
                 return false;
             }
+        }
+
+        private static async Task<int> DownloadPatch(Uri uri, string path)
+        {
+            await webClient.DownloadFileTaskAsync(uri, path);
+            Trace.WriteLine("Patch downloaded");
+            return 1;
         }
 
         public static void WriteResourceFile(Uri uri, string path, int bufferLength = 4096)
