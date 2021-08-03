@@ -90,8 +90,10 @@ namespace beyond_melee_installer
                     FileNameLabel2.Text = "Running Patch...";
                     if (RunPatch("beyond_patch", filePath, $"Beyond-Melee-{versionNumber}"))
                     {
+                        FileNameLabel.Foreground = Brushes.LightGreen;
+                        FileNameLabel.Text = "Success! Your file should be in the same folder as this patcher named";
                         FileNameLabel2.Foreground = Brushes.LightGreen;
-                        FileNameLabel2.Text = $"Success! Your file should be in the same folder as this application named 'Beyond-Melee-{versionNumber}.iso'.";
+                        FileNameLabel2.Text = $"'Beyond-Melee-{versionNumber}.iso'.";
                     }
                     else
                     {
@@ -107,8 +109,10 @@ namespace beyond_melee_installer
                     FileNameLabel2.Text = "Running Patch...";
                     if (RunPatch("diet_patch", filePath, $"Diet-Beyond-Melee-{versionNumber}"))
                     {
+                        FileNameLabel.Foreground = Brushes.LightGreen;
+                        FileNameLabel.Text = "Success! Your file should be in the same folder as this patcher named";
                         FileNameLabel2.Foreground = Brushes.LightGreen;
-                        FileNameLabel2.Text = $"Success! Your file should be in the same folder as this application named 'Diet-Beyond-Melee-{versionNumber}.iso'.";
+                        FileNameLabel2.Text = $"'Diet-Beyond-Melee-{versionNumber}.iso'.";
                     }
                     else
                     {
