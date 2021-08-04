@@ -7,7 +7,7 @@
     <UseWPF>true</UseWPF>
 	<ApplicationIcon>bm.ico</ApplicationIcon>
 	<AssemblyName>beyond-melee-patcher</AssemblyName>
-	<Version>0.2.0-offline</Version>
+	<Version>0.3.0</Version>
 	<Authors>Cynthetic</Authors>
 	<Company>Beyond Melee Team</Company>
 	<PublishTrimmed>True</PublishTrimmed>
@@ -28,8 +28,6 @@
 		<None Remove="Images\patreon.png" />
 		<None Remove="Images\splash.png" />
 		<None Remove="Images\title.png" />
-		<None Remove="resources\beyond_patch.xdelta" />
-		<None Remove="resources\diet_patch.xdelta" />
 		<None Remove="resources\xdelta.exe" />
 	</ItemGroup>
 
@@ -68,12 +66,6 @@
 			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
 		</Resource>
 		<Resource Include="Images\patreon.png">
-			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
-		</Resource>
-		<Resource Include="resources\beyond_patch.xdelta">
-			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
-		</Resource>
-		<Resource Include="resources\diet_patch.xdelta">
 			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
 		</Resource>
 		<SplashScreen Include="Images\splash.png">

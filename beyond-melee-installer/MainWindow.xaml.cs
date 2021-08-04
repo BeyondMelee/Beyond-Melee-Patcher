@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading;
 using System.Security.Cryptography;
@@ -24,18 +25,27 @@ namespace beyond_melee_installer
 
         private readonly string versionNumber = "1-1-1";
 
-        private static readonly Uri beyondUri = new Uri("https://download1586.mediafire.com/8b4zgkzdu8mg/orwanf9crpzha3l/beyond_patch.xdelta", UriKind.Absolute);
-        private static readonly Uri dietUri = new Uri("https://download1072.mediafire.com/nrmdbyxn6meg/ngcf4nwuo7bao9u/diet_beyond_patch.xdelta", UriKind.Absolute);
+        private static readonly Uri beyondUri = new Uri("https://beyondmelee.com/files/beyondPatch.xdelta", UriKind.Absolute);
+        private static readonly Uri dietUri = new Uri("https://beyondmelee.com/files/dietPatch.xdelta", UriKind.Absolute);
 
         private readonly BackgroundWorker worker = new BackgroundWorker();
 
         private static readonly WebClient webClient = new WebClient();
 
-        //private Uri deltaUri = new Uri("pack://application:,,,/Resources/Patch.xdelta");
+        private static readonly Dictionary<string, string> isoHashDict = new Dictionary<string, string>();
+        private static readonly Dictionary<string, string> patchHashDict = new Dictionary<string, string>();
 
         public MainWindow()
         {
             InitializeComponent();
+            isoHashDict.Add("0e63d4223b01d9aba596259dc155a174", "valid");
+            isoHashDict.Add("570f5ba46604d17f2d9c4fabe4b8c34d", "nkit");
+
+            //TODO add progress bar
+            //TODO add patch hashes
+            //TODO add grabbing new download links from sever automatically
+            //TODO add version string grabbing from server automatically
+            
         }
 
         private void FilePanel_Drop(object sender, DragEventArgs e)
@@ -81,7 +91,7 @@ namespace beyond_melee_installer
             }
         }
 
-        private void patch_Click(object sender, RoutedEventArgs e)
+        private void PatchClick(object sender, RoutedEventArgs e)
         {
             if (filePath == "")
             {
@@ -92,41 +102,11 @@ namespace beyond_melee_installer
             {
                 if (BeyondRadio.IsChecked == true)
                 {
-                    //for some reason this doesnt work
-                    FileNameLabel2.Foreground = Brushes.Yellow;
-                    FileNameLabel2.Text = "Running Patch...";
-                    if (RunPatch("beyond", filePath, $"Beyond-Melee-{versionNumber}"))
-                    {
-                        FileNameLabel.Foreground = Brushes.LightGreen;
-                        FileNameLabel.Text = "Success! Your file should be in the same folder as this patcher named";
-                        FileNameLabel2.Foreground = Brushes.LightGreen;
-                        FileNameLabel2.Text = $"'Beyond-Melee-{versionNumber}.iso'.";
-                    }
-                    else
-                    {
-                        FileNameLabel2.Foreground = Brushes.Red;
-                        FileNameLabel2.Text = "Something went wrong. Check the #patcher-support channel in the Discord.";
-                    }
-
+                    PatchDisplay("beyond");
                 }
                 else if (DietRadio.IsChecked == true)
                 {
-                    //for some reason this doesnt work
-                    FileNameLabel2.Foreground = Brushes.Yellow;
-                    FileNameLabel2.Text = "Running Patch...";
-
-                    if ((bool)RunPatch("diet", filePath, $"Diet-Beyond-Melee-{versionNumber}"))
-                    {
-                        FileNameLabel.Foreground = Brushes.LightGreen;
-                        FileNameLabel.Text = "Success! Your file should be in the same folder as this patcher named";
-                        FileNameLabel2.Foreground = Brushes.LightGreen;
-                        FileNameLabel2.Text = $"'Diet-Beyond-Melee-{versionNumber}.iso'.";
-                    }
-                    else
-                    {
-                        FileNameLabel2.Foreground = Brushes.Red;
-                        FileNameLabel2.Text = "Something went wrong. Check the #patcher-support channel in the Discord.";
-                    }
+                    PatchDisplay("diet");
 
                 }
                 else
@@ -134,6 +114,35 @@ namespace beyond_melee_installer
                     FileNameLabel2.Foreground = Brushes.Red;
                     FileNameLabel2.Text = "Please choose a version";
                 }
+            }
+        }
+
+        private async Task PatchDisplay(string version)
+        {
+            //for some reason this doesnt work
+            FileNameLabel2.Foreground = Brushes.Yellow;
+            FileNameLabel2.Text = "Running Patch...";
+            string name = "";
+            if (version == "beyond")
+            {
+                name = $"Beyond-Melee-{versionNumber}";
+            }
+            else
+            {
+                name = $"Diet-Beyond-Melee-{versionNumber}";
+            }
+
+            if (await RunPatch(version, filePath, name))
+            {
+                FileNameLabel.Foreground = Brushes.LightGreen;
+                FileNameLabel.Text = "Success! Your file should be in the same folder as this patcher named";
+                FileNameLabel2.Foreground = Brushes.LightGreen;
+                FileNameLabel2.Text = $"'{name}.iso'.";
+            }
+            else
+            {
+                FileNameLabel2.Foreground = Brushes.Red;
+                FileNameLabel2.Text = "Something went wrong. Check the #patcher-support channel in the Discord.";
             }
         }
 
@@ -148,25 +157,22 @@ namespace beyond_melee_installer
             Trace.WriteLine($"Created tmpFolder at {tmpFolder}");
 
             string xdeltaPath = Path.Join(tmpFolder, "xdelta.exe");
-            string deltaPath = Path.Join(tmpFolder, "Patch.xdelta");
+            string patchPath = Path.Join(tmpFolder, "Patch.xdelta");
 
             if (patch == "beyond")
             {
-                await DownloadPatch(beyondUri, xdeltaPath);
+                await DownloadPatch(beyondUri, patchPath);
             }
             else
             {
-                await DownloadPatch(deltaUri, xdeltaPath);
+                await DownloadPatch(dietUri, patchPath);
             }
             
-
-            //WriteResourceFile(xdeltaUri, xdeltaPath);
-            //Trace.WriteLine($"Copied xdelta to {xdeltaPath}");
-            //WriteResourceFile(deltaUri, deltaPath);
-            //Trace.WriteLine($"Copied Patch to {deltaPath}");
+            WriteResourceFile(xdeltaUri, xdeltaPath);
+            Trace.WriteLine($"Copied xdelta to {xdeltaPath}");
 
             //Change the following string from /C to /K to leave the cmd window open for debugging
-            string cmdTxt = $"-d -f -s \"{isoPath}\" \"{deltaPath}\" \"{versionName}\".iso";
+            string cmdTxt = $"-d -f -s \"{isoPath}\" \"{patchPath}\" \"{versionName}\".iso";
             Process cmdPatch = new Process();
             cmdPatch.StartInfo.FileName = xdeltaPath;
             cmdPatch.StartInfo.Arguments = cmdTxt;
@@ -180,7 +186,7 @@ namespace beyond_melee_installer
                 Trace.WriteLine("xdelta exited with code 0");
                 File.Delete(xdeltaPath);
                 Trace.WriteLine($"Deleted xdelta");
-                File.Delete(deltaPath);
+                File.Delete(patchPath);
                 Trace.WriteLine($"Deleted patch");
                 return true;
             }
@@ -189,17 +195,16 @@ namespace beyond_melee_installer
                 Trace.WriteLine("xdelta exited with different exit code than zero, error");
                 File.Delete(xdeltaPath);
                 Trace.WriteLine($"Deleted xdelta");
-                File.Delete(deltaPath);
+                File.Delete(patchPath);
                 Trace.WriteLine($"Deleted patch");
                 return false;
             }
         }
 
-        private static async Task<int> DownloadPatch(Uri uri, string path)
+        private static async Task DownloadPatch(Uri uri, string path)
         {
             await webClient.DownloadFileTaskAsync(uri, path);
             Trace.WriteLine("Patch downloaded");
-            return 1;
         }
 
         public static void WriteResourceFile(Uri uri, string path, int bufferLength = 4096)
@@ -266,16 +271,17 @@ namespace beyond_melee_installer
 
         private string CheckMD5(string hash)
         {
-            switch (hash)
+            if (isoHashDict.ContainsKey(hash))
             {
-                case "0e63d4223b01d9aba596259dc155a174":
-                    return "valid";
-                case "570f5ba46604d17f2d9c4fabe4b8c34d":
-                    return "nkit";
-                default:
-                    return "invalid";
+                return isoHashDict[hash];
             }
+            return "invalid";
 
+        }
+
+        private bool CheckPatchMD5(string hash)
+        {
+            return patchHashDict.ContainsKey(hash);
         }
 
         private void CompareMD5(string hash, string filename)
