@@ -164,25 +164,28 @@ namespace beyond_melee_installer
 
             if (patch == "beyond")
             {
-                await DownloadPatch(beyondUri, patchPath);
-                worker.DoWork += delegate (object s, DoWorkEventArgs args)
+                for (int i = 0; i > 3; i++)
                 {
-                    
-                    string path = (string)args.Argument;
-                    var hashResult = GetMD5(path);
-                    if (CheckPatchMD5(hashResult))
+                    await DownloadPatch(beyondUri, patchPath);
+                    worker.DoWork += delegate (object s, DoWorkEventArgs args)
                     {
 
-                    }
-                    args.Result = hashResult;
-                };
+                        string path = (string)args.Argument;
+                        var hashResult = GetMD5(path);
+                        if (CheckPatchMD5(hashResult))
+                        {
+                            break;
+                        }
+                        args.Result = hashResult;
+                    };
 
-                worker.RunWorkerCompleted += delegate (object s, RunWorkerCompletedEventArgs args)
-                {
-                    string result = (string)args.Result;
-                    
-                };
-                worker.RunWorkerAsync(patchPath);
+                    worker.RunWorkerCompleted += delegate (object s, RunWorkerCompletedEventArgs args)
+                    {
+                        string result = (string)args.Result;
+
+                    };
+                    worker.RunWorkerAsync(patchPath);
+                }
             }
             else
             {
