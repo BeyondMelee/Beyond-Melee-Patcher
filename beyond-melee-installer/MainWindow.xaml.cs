@@ -25,15 +25,15 @@ namespace beyond_melee_installer
 
         private readonly string versionNumber = "1-1-1";
 
-        private static readonly Uri beyondUri = new Uri("https://beyondmelee.com/files/beyondPatch.xdelta", UriKind.Absolute);
-        private static readonly Uri dietUri = new Uri("https://beyondmelee.com/files/dietPatch.xdelta", UriKind.Absolute);
+        private readonly Uri beyondUri = new Uri("https://beyondmelee.com/files/beyondPatch.xdelta", UriKind.Absolute);
+        private readonly Uri dietUri = new Uri("https://beyondmelee.com/files/dietPatch.xdelta", UriKind.Absolute);
 
         private readonly BackgroundWorker worker = new BackgroundWorker();
 
-        private static readonly WebClient webClient = new WebClient();
+        private readonly WebClient webClient = new WebClient();
 
-        private static readonly Dictionary<string, string> isoHashDict = new Dictionary<string, string>();
-        private static readonly Dictionary<string, string> patchHashDict = new Dictionary<string, string>();
+        private readonly Dictionary<string, string> isoHashDict = new Dictionary<string, string>();
+        private readonly Dictionary<string, string> patchHashDict = new Dictionary<string, string>();
 
         public MainWindow()
         {
@@ -41,11 +41,14 @@ namespace beyond_melee_installer
             isoHashDict.Add("0e63d4223b01d9aba596259dc155a174", "valid");
             isoHashDict.Add("570f5ba46604d17f2d9c4fabe4b8c34d", "nkit");
 
+            patchHashDict.Add("", "");
+            patchHashDict.Add("", "");
+
             //TODO add progress bar
             //TODO add patch hashes
             //TODO add grabbing new download links from sever automatically
             //TODO add version string grabbing from server automatically
-            
+
         }
 
         private void FilePanel_Drop(object sender, DragEventArgs e)
@@ -122,7 +125,7 @@ namespace beyond_melee_installer
             //for some reason this doesnt work
             FileNameLabel2.Foreground = Brushes.Yellow;
             FileNameLabel2.Text = "Running Patch...";
-            string name = "";
+            string name;
             if (version == "beyond")
             {
                 name = $"Beyond-Melee-{versionNumber}";
@@ -146,11 +149,11 @@ namespace beyond_melee_installer
             }
         }
 
-        public static async Task<bool> RunPatch(string patch, string isoPath, string versionName)
+        public async Task<bool> RunPatch(string patch, string isoPath, string versionName)
         {
 
             var xdeltaUri = new Uri("pack://application:,,,/Resources/xdelta.exe");
-            var deltaUri = new Uri($"pack://application:,,,/Resources/{patch}.xdelta");
+            //var deltaUri = new Uri($"pack://application:,,,/Resources/{patch}.xdelta");
 
             string tmpFolder = Path.Join(Path.GetTempPath(), "BeyondMelee");
             Directory.CreateDirectory(tmpFolder);
@@ -162,6 +165,24 @@ namespace beyond_melee_installer
             if (patch == "beyond")
             {
                 await DownloadPatch(beyondUri, patchPath);
+                worker.DoWork += delegate (object s, DoWorkEventArgs args)
+                {
+                    
+                    string path = (string)args.Argument;
+                    var hashResult = GetMD5(path);
+                    if (CheckPatchMD5(hashResult))
+                    {
+
+                    }
+                    args.Result = hashResult;
+                };
+
+                worker.RunWorkerCompleted += delegate (object s, RunWorkerCompletedEventArgs args)
+                {
+                    string result = (string)args.Result;
+                    
+                };
+                worker.RunWorkerAsync(patchPath);
             }
             else
             {
@@ -201,13 +222,13 @@ namespace beyond_melee_installer
             }
         }
 
-        private static async Task DownloadPatch(Uri uri, string path)
+        private async Task DownloadPatch(Uri uri, string path)
         {
             await webClient.DownloadFileTaskAsync(uri, path);
             Trace.WriteLine("Patch downloaded");
         }
 
-        public static void WriteResourceFile(Uri uri, string path, int bufferLength = 4096)
+        public void WriteResourceFile(Uri uri, string path, int bufferLength = 4096)
         {
             var xdeltaResource = Application.GetResourceStream(uri);
             Stream xdeltaStream = File.OpenWrite(path);
@@ -286,7 +307,8 @@ namespace beyond_melee_installer
 
         private void CompareMD5(string hash, string filename)
         {
-            if (CheckMD5(hash) == "invalid")
+            var hashType = CheckMD5(hash);
+            if (hashType == "invalid")
             {
                 FileNameLabel.Foreground = Brushes.Red;
                 FileNameLabel.Text = "This iso file seems to be modified.  Please use a completely vanilla NTSC 1.02 iso.";
@@ -294,7 +316,7 @@ namespace beyond_melee_installer
                 FileNameLabel2.Text = "(This includes any skins or visual mods, which also interfere with the patch.)";
                 LinkText.Text = String.Empty;
             }
-            else if (CheckMD5(hash) == "nkit")
+            else if (hashType == "nkit")
             {
                 FileNameLabel.Foreground = Brushes.Red;
                 FileNameLabel.Text = "This application cannot process nkit compressed iso files.";
