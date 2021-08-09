@@ -174,7 +174,7 @@ namespace beyond_melee_installer
                         var hashResult = GetMD5(path);
                         if (CheckPatchMD5(hashResult))
                         {
-                            break;
+                            return;
                         }
                         args.Result = hashResult;
                     };

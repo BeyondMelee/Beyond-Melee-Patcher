@@ -98,12 +98,9 @@
 			    </Hyperlink>
 		    </TextBlock>
 
-            <Button x:Name="dm" Content="Patch ISO!" HorizontalAlignment="Left" VerticalAlignment="Top" FontFamily="{StaticResource Montserrat}" Click="PatchClick" Grid.Row="1" Margin="108,410,0,0" Grid.Column="2"/>
-
-            <Border BorderThickness="10" Opacity="0.9" CornerRadius="6" Grid.Row="1" Margin="19,420,16,33" BorderBrush="Black">
-                <Rectangle Fill="#000000" Stretch="UniformToFill" ClipToBounds="True" Grid.ColumnSpan="3" Margin="0,0,-1,0"/>
-            </Border>
-            <TextBlock FontFamily="{StaticResource Montserrat}" FontSize="12" Text="Patcher by cynthetic - @cyntheticTV" Margin="19,423,8,33" Grid.Row="1" Width="240" Height="20"/>
+            <Button x:Name="dm" Content="Patch ISO!" HorizontalAlignment="Left" VerticalAlignment="Top" FontFamily="{StaticResource Montserrat}" Click="PatchClick" Grid.Row="1" Margin="108,402,0,0" Grid.Column="2"/>
+            <TextBlock FontFamily="{StaticResource Montserrat}" FontSize="12" Text="Patcher by cynthetic - @cyntheticTV" Margin="10,10,17,446" Grid.Row="1" Width="240" Height="20"/>
+            <ProgressBar HorizontalAlignment="Right" Height="17" Margin="0,410,172,0" Grid.Row="1" VerticalAlignment="Top" Width="456" Grid.ColumnSpan="3"/>
 
         </Grid>
     </StackPanel>
